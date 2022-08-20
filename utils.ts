@@ -1,8 +1,5 @@
 import axios from 'axios';
-import {MMKV} from 'react-native-mmkv';
 import {Word, WordData} from './types';
-
-export const storage = new MMKV();
 
 export const cleanResult = (res: WordData): Word | string => {
   const pron = res.phonetics.find(pronounce => {

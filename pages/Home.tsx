@@ -11,36 +11,26 @@ import {
 import {FAB} from '@react-native-material/core';
 import CollectionThumbnails from '../components/CollectionThumbnail';
 import {Collection} from '../types';
-import {storage} from '../utils';
+import {addNewCollection, deleteDB, getCollections} from '../storage';
 
 const Home = () => {
   const [showModal, setShowModal] = useState<boolean>(false);
-  const [collections, setCollections] = useState<Array<Collection>>();
+  const [collections, setCollections] =
+    useState<Array<{name: string; wordsLength: number}>>();
   const [collectionName, setCollectionName] = useState<string>();
 
   useEffect(() => {
-    const _cols = storage.getAllKeys();
-    const res = [];
-    for (const collection of _cols) {
-      const _col = storage.getString(collection);
-      if (_col) res.push(JSON.parse(_col));
-    }
-    setCollections(res);
+    const collections = getCollections();
+    setCollections(collections);
+    // deleteDB();
   }, []);
 
   const submit = (collectionName: string) => {
-    const newCollection: Collection = {
-      name: collectionName,
-      words: [],
-    };
-    if (collectionName)
-      storage.set(
-        `collection_${collectionName}`,
-        JSON.stringify(newCollection),
-      );
-    if (collections) setCollections([...collections, newCollection]);
-    else setCollections([newCollection]);
-    setShowModal(false);
+    if (collectionName) {
+      addNewCollection(collectionName);
+      setCollections(getCollections());
+      setShowModal(false);
+    }
   };
 
   return (

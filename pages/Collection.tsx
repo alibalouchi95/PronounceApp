@@ -5,7 +5,7 @@ import CollectionWord from '../components/CollectionWord';
 import {Button} from '@react-native-material/core';
 import NewWord from '../components/NewWord';
 import {Word} from '../types';
-import {storage} from '../utils';
+import {addNewWordToCollection, getCollection} from '../storage';
 
 const Collection = ({
   route,
@@ -18,21 +18,19 @@ const Collection = ({
   const id = route.params.id;
 
   useEffect(() => {
-    const colData = storage.getString(`collection_${id}`);
-    if (colData) setCollectionWords(JSON.parse(colData).words);
+    const words = getCollection(id);
+    if (words && typeof words !== 'string') setCollectionWords(words);
   }, []);
 
   useEffect(() => {
     if (newData) {
-      storage.set(
-        `collection_${id}`,
-        JSON.stringify(collectionWords.concat(newData)),
-      );
-      setNewData(undefined);
-      const colData = storage.getString(`collection_${id}`);
-      if (colData) setCollectionWords(JSON.parse(colData));
+      addNewWordToCollection(id, newData);
+      const collection = getCollection(id);
+      if (collection) setCollectionWords(collection);
     }
   }, [newData]);
+
+  console.log({collectionWords});
 
   return (
     <View>

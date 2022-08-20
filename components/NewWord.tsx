@@ -22,10 +22,6 @@ const NewWord = ({setData, closeModal}: Props) => {
   const [newWord, setNewWord] = useState<string>();
 
   const getData = async (word: string) => {
-    if (word.length < 3) {
-      Toast.show('The length of the word is too little');
-      return;
-    }
     setLoading(true);
     try {
       const res = await API_CALL.getWordData(word);

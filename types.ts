@@ -47,3 +47,5 @@ export type WordData = {
   };
   sourceUrls: Array<string>;
 };
+
+export type CollectionThumbnail = {name: string; wordsLength: number};

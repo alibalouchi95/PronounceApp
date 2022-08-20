@@ -8,30 +8,30 @@ import {
   Text,
   View,
 } from 'react-native';
-import {Collection} from '../types';
+import {CollectionThumbnail as CollectionThumbnailType} from '../types';
 
 type Props = {
-  collections: Array<Collection>;
+  collections: Array<CollectionThumbnailType>;
 };
 
-const CollectionThumbnail = ({collection}: {collection: Collection}) => {
+const CollectionThumbnail = ({
+  collection,
+}: {
+  collection: CollectionThumbnailType;
+}) => {
   const navigation = useNavigation();
-
-  console.log({collection});
 
   return (
     <Pressable
       onPress={() => navigation.navigate('Collection', {id: collection.name})}
       style={styles.thumbnail}>
       <Text>{collection.name}</Text>
-      <Text>
-        Includes: {collection.words ? collection.words.length : 0} Words
-      </Text>
+      <Text>Includes: {collection.wordsLength} Words</Text>
     </Pressable>
   );
 };
 
-const rowMaker = (collections: Array<Collection>) => {
+const rowMaker = (collections: Array<CollectionThumbnailType>) => {
   const result = [];
   let res = [];
   let counter = 0;
@@ -48,7 +48,7 @@ const rowMaker = (collections: Array<Collection>) => {
   return result;
 };
 
-const renderRows = (collectionRow: Array<Collection>) => {
+const renderRows = (collectionRow: Array<CollectionThumbnailType>) => {
   return (
     <View style={styles.rowContainer}>
       {collectionRow.map(col => (
