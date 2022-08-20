@@ -24,9 +24,12 @@ const Collection = ({
 
   useEffect(() => {
     if (newData) {
-      addNewWordToCollection(id, newData);
-      const collection = getCollection(id);
-      if (collection) setCollectionWords(collection);
+      const collectionWordNames = collectionWords.map(col => col.word);
+      if (!collectionWordNames.includes(newData.word)) {
+        addNewWordToCollection(id, newData);
+        const collection = getCollection(id);
+        if (collection) setCollectionWords(collection);
+      }
     }
   }, [newData]);
 

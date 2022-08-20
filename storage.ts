@@ -8,8 +8,14 @@ export const deleteDB = () => {
 };
 
 export const addNewCollection = (collectionName: string) => {
-  const collectionWords: Array<Word> = [];
-  storage.set(`collection_${collectionName}`, JSON.stringify(collectionWords));
+  const keys = storage.getAllKeys();
+  if (!keys.includes(`collection_${collectionName}`)) {
+    const collectionWords: Array<Word> = [];
+    storage.set(
+      `collection_${collectionName}`,
+      JSON.stringify(collectionWords),
+    );
+  }
 };
 
 export const addNewWordToCollection = (

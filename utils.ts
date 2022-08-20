@@ -4,10 +4,13 @@ import {Word, WordData} from './types';
 export const cleanResult = (res: WordData): Word | string => {
   const pron = res.phonetics.find(pronounce => {
     return (
-      pronounce.text && pronounce.audio && pronounce.license.url.includes('us')
+      pronounce.text &&
+      pronounce.audio &&
+      pronounce.license.name.includes('BY-SA') &&
+      pronounce.license.name.includes('3')
     );
   });
-
+  console.log({pron});
   if (pron) {
     const result = {
       word: res.word,
