@@ -1,8 +1,15 @@
 import React, {useEffect, useState} from 'react';
 import {RouteProp} from '@react-navigation/native';
-import {View, Modal, StyleSheet, Dimensions} from 'react-native';
+import {
+  View,
+  Modal,
+  StyleSheet,
+  Dimensions,
+  Pressable,
+  ScrollView,
+} from 'react-native';
 import CollectionWord from '../components/CollectionWord';
-import {Button} from '@react-native-material/core';
+import {Text} from '@react-native-material/core';
 import NewWord from '../components/NewWord';
 import {Word} from '../types';
 import {addNewWordToCollection, getCollection} from '../storage';
@@ -15,11 +22,17 @@ const Collection = ({
   const [showModal, setShowModal] = useState<boolean>(false);
   const [newData, setNewData] = useState<Word>();
   const [collectionWords, setCollectionWords] = useState<Array<Word>>([]);
+  const [date, setDate] = useState<Date>();
   const id = route.params.id;
 
   useEffect(() => {
-    const words = getCollection(id);
-    if (words && typeof words !== 'string') setCollectionWords(words);
+    const collection = getCollection(id);
+    if (collection) {
+      const {words, date} = collection;
+      console.log({collection});
+      if (words && typeof words !== 'string') setCollectionWords(words);
+      if (date) setDate(date);
+    }
   }, []);
 
   useEffect(() => {
@@ -28,16 +41,17 @@ const Collection = ({
       if (!collectionWordNames.includes(newData.word)) {
         addNewWordToCollection(id, newData);
         const collection = getCollection(id);
-        if (collection) setCollectionWords(collection);
+        if (collection) {
+          const {words, date} = collection;
+          if (words && typeof words !== 'string') setCollectionWords(words);
+          if (date) setDate(date);
+        }
       }
     }
   }, [newData]);
 
-  console.log({collectionWords});
-
   return (
-    <View>
-      <Button title="Create new" onPress={() => setShowModal(true)} />
+    <ScrollView>
       {collectionWords
         ? collectionWords.map(word => (
             <CollectionWord
@@ -47,19 +61,27 @@ const Collection = ({
             />
           ))
         : null}
-      <Modal visible={showModal} onDismiss={() => setShowModal(false)}>
+      <Pressable
+        style={styles.createNewWord}
+        onPress={() => setShowModal(true)}>
+        <Text style={styles.createNewWordText}>Create new</Text>
+      </Pressable>
+      <Modal
+        visible={showModal}
+        onDismiss={() => setShowModal(false)}
+        animationType="slide"
+        transparent>
         {showModal ? (
           <View style={styles.centeredView}>
-            <View style={styles.modalView}>
-              <NewWord
-                setData={setNewData}
-                closeModal={() => setShowModal(false)}
-              />
-            </View>
+            <NewWord
+              setShowModal={setShowModal}
+              setData={setNewData}
+              closeModal={() => setShowModal(false)}
+            />
           </View>
         ) : null}
       </Modal>
-    </View>
+    </ScrollView>
   );
 };
 
@@ -76,6 +98,25 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     height: Dimensions.get('screen').height / 2,
     width: Dimensions.get('screen').width,
+  },
+  createNewWord: {
+    backgroundColor: '#FFFFFF',
+    padding: 10,
+    margin: 10,
+    width: '95%',
+    height: 100,
+    borderColor: '#004BA8',
+    borderStyle: 'dashed',
+    borderWidth: 1.2,
+    borderRadius: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  createNewWordText: {
+    color: '#24272B',
+    fontSize: 17,
+    fontWeight: 'bold',
+    textAlign: 'center',
   },
 });
 

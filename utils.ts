@@ -2,15 +2,20 @@ import axios from 'axios';
 import {Word, WordData} from './types';
 
 export const cleanResult = (res: WordData): Word | string => {
+  console.log({res: res.phonetics[1].license});
   const pron = res.phonetics.find(pronounce => {
     return (
       pronounce.text &&
       pronounce.audio &&
-      pronounce.license.name.includes('BY-SA') &&
-      pronounce.license.name.includes('3')
+      (pronounce.license.name.includes('BY-SA') ||
+        (pronounce.license.name.includes('BY') &&
+          pronounce.license.name.includes('US'))) &&
+      pronounce.license.name.includes('3.0')
     );
   });
+
   console.log({pron});
+
   if (pron) {
     const result = {
       word: res.word,
@@ -45,4 +50,13 @@ export const API_CALL = {
 
     return result;
   },
+};
+
+export const cleanDate = (date: Date | string) => {
+  if (typeof date === 'string') date = new Date(date);
+  const year = date.getUTCFullYear();
+  const month = date.getMonth();
+  const day = date.getDay();
+
+  return `${year}/${month + 1}/${day}`;
 };
