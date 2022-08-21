@@ -53,3 +53,100 @@ export type CollectionThumbnail = {
   wordsLength: number;
   date: Date;
 };
+
+export interface GetWordResult {
+  id: string;
+  metadata: Metadata;
+  results?: ResultsEntity[] | null;
+  word: string;
+}
+export interface Metadata {
+  operation: string;
+  provider: string;
+  schema: string;
+}
+export interface ResultsEntity {
+  id: string;
+  language: string;
+  lexicalEntries?: LexicalEntriesEntity[] | null;
+  type: string;
+  word: string;
+}
+export interface LexicalEntriesEntity {
+  derivatives?:
+    | DerivativesEntityOrDomainClassesEntityOrDomainsEntityOrLexicalCategoryOrSemanticClassesEntity[]
+    | null;
+  entries?: EntriesEntity[] | null;
+  language: string;
+  lexicalCategory: DerivativesEntityOrDomainClassesEntityOrDomainsEntityOrLexicalCategoryOrSemanticClassesEntity;
+  text: string;
+}
+export interface DerivativesEntityOrDomainClassesEntityOrDomainsEntityOrLexicalCategoryOrSemanticClassesEntity {
+  id: string;
+  text: string;
+}
+export interface EntriesEntity {
+  etymologies?: string[] | null;
+  grammaticalFeatures?: GrammaticalFeaturesEntity[] | null;
+  pronunciations?: PronunciationsEntity[] | null;
+  senses?: SensesEntity[] | null;
+}
+export interface GrammaticalFeaturesEntity {
+  id: string;
+  text: string;
+  type: string;
+}
+export interface PronunciationsEntity {
+  dialects?: string[] | null;
+  phoneticNotation: string;
+  phoneticSpelling: string;
+  audioFile?: string | null;
+}
+export interface SensesEntity {
+  definitions?: string[] | null;
+  examples?: ExamplesEntity[] | null;
+  id: string;
+  shortDefinitions?: string[] | null;
+  subsenses?: SubsensesEntity[] | null;
+  synonyms?: SynonymsEntity[] | null;
+  thesaurusLinks?: ThesaurusLinksEntity[] | null;
+  domainClasses?:
+    | DerivativesEntityOrDomainClassesEntityOrDomainsEntityOrLexicalCategoryOrSemanticClassesEntity[]
+    | null;
+  domains?:
+    | DerivativesEntityOrDomainClassesEntityOrDomainsEntityOrLexicalCategoryOrSemanticClassesEntity[]
+    | null;
+  notes?: NotesEntity[] | null;
+  semanticClasses?:
+    | DerivativesEntityOrDomainClassesEntityOrDomainsEntityOrLexicalCategoryOrSemanticClassesEntity[]
+    | null;
+}
+export interface ExamplesEntity {
+  text: string;
+}
+export interface SubsensesEntity {
+  definitions?: string[] | null;
+  examples?: ExamplesEntity[] | null;
+  id: string;
+  shortDefinitions?: string[] | null;
+  synonyms?: SynonymsEntity[] | null;
+  thesaurusLinks?: ThesaurusLinksEntity[] | null;
+  domainClasses?:
+    | DerivativesEntityOrDomainClassesEntityOrDomainsEntityOrLexicalCategoryOrSemanticClassesEntity[]
+    | null;
+  domains?:
+    | DerivativesEntityOrDomainClassesEntityOrDomainsEntityOrLexicalCategoryOrSemanticClassesEntity[]
+    | null;
+}
+export interface SynonymsEntity {
+  language: string;
+  text: string;
+}
+export interface ThesaurusLinksEntity {
+  entry_id: string;
+  sense_id: string;
+}
+export interface NotesEntity {
+  text: string;
+  type: string;
+}

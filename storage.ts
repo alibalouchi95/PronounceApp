@@ -29,24 +29,20 @@ export const addNewWordToCollection = (
     if (store && store.words) {
       store.words.push(newWord);
     }
-    console.log({...store});
     storage.set(collectionName, JSON.stringify(store));
   }
 };
 
 export const removeWordFromCollection = (
   collectionName: string,
-  word: Word,
+  word: string,
 ) => {
   const collection = storage.getString(collectionName);
   if (collection) {
     const store = JSON.parse(collection);
     if (store && store.words) {
-      const words = store.words.filter((_word: Word) => _word !== word);
-      storage.set(
-        `collection_${collectionName}`,
-        JSON.stringify({...store, words}),
-      );
+      const words = store.words.filter((_word: Word) => _word.word !== word);
+      storage.set(collectionName, JSON.stringify({...store, words}));
     }
   }
 };

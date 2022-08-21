@@ -12,7 +12,11 @@ import CollectionWord from '../components/CollectionWord';
 import {Text} from '@react-native-material/core';
 import NewWord from '../components/NewWord';
 import {Word} from '../types';
-import {addNewWordToCollection, getCollection} from '../storage';
+import {
+  addNewWordToCollection,
+  getCollection,
+  removeWordFromCollection,
+} from '../storage';
 
 const Collection = ({
   route,
@@ -29,26 +33,29 @@ const Collection = ({
     const collection = getCollection(id);
     if (collection) {
       const {words, date} = collection;
-      console.log({collection});
       if (words && typeof words !== 'string') setCollectionWords(words);
       if (date) setDate(date);
     }
-  }, []);
+  }, [showModal]);
 
   useEffect(() => {
     if (newData) {
       const collectionWordNames = collectionWords.map(col => col.word);
       if (!collectionWordNames.includes(newData.word)) {
-        addNewWordToCollection(id, newData);
-        const collection = getCollection(id);
-        if (collection) {
-          const {words, date} = collection;
-          if (words && typeof words !== 'string') setCollectionWords(words);
-          if (date) setDate(date);
-        }
       }
+      setNewData(undefined);
     }
   }, [newData]);
+
+  const removeWord = (word: string) => {
+    removeWordFromCollection(id, word);
+    const collection = getCollection(id);
+    if (collection) {
+      const {words, date} = collection;
+      if (words && typeof words !== 'string') setCollectionWords(words);
+      if (date) setDate(date);
+    }
+  };
 
   return (
     <ScrollView>
@@ -56,8 +63,8 @@ const Collection = ({
         ? collectionWords.map(word => (
             <CollectionWord
               key={word.word}
-              word={word.word}
-              pronounciation={word.pronounciation}
+              word={word}
+              removeWord={removeWord}
             />
           ))
         : null}
@@ -75,7 +82,7 @@ const Collection = ({
           <View style={styles.centeredView}>
             <NewWord
               setShowModal={setShowModal}
-              setData={setNewData}
+              collectionName={id}
               closeModal={() => setShowModal(false)}
             />
           </View>

@@ -13,14 +13,15 @@ import {
 } from 'react-native';
 import {Word} from '../types';
 import {API_CALL} from '../utils';
+import {addNewWordToCollection, getCollection} from '../storage';
 
 type Props = {
-  setData: (word: Word) => void;
   closeModal: () => void;
   setShowModal: (inp: boolean) => void;
+  collectionName: string;
 };
 
-const NewWord = ({setData, closeModal, setShowModal}: Props) => {
+const NewWord = ({closeModal, setShowModal, collectionName}: Props) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [newWord, setNewWord] = useState<string>();
 
@@ -30,21 +31,18 @@ const NewWord = ({setData, closeModal, setShowModal}: Props) => {
       try {
         const res = await API_CALL.getWordData(newWord);
         if (typeof res !== 'string') {
-          setData(res);
-          Toast.show('The word has been added');
-        } else Toast.show(res);
+          addNewWordToCollection(collectionName, res);
+        }
         setLoading(false);
       } catch (e) {
-        Toast.show('The word does not found');
         setLoading(false);
       }
     }
   };
 
   const submitWord = async () => {
-    getData()
-      .then(() => closeModal())
-      .catch(err => Toast.show(err));
+    await getData();
+    closeModal();
   };
 
   return (

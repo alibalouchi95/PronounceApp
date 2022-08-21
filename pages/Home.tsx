@@ -42,7 +42,7 @@ const Home = () => {
         }}>
         <Image source={require('../assets/plus-icons/icons8-plus-128.png')} />
       </Pressable>
-      <View>
+      <View style={{width: '100%', height: '100%'}}>
         {collections ? (
           <CollectionThumbnails collections={collections} />
         ) : null}

@@ -1,45 +1,51 @@
 import axios from 'axios';
-import {Word, WordData} from './types';
+import {GetWordResult, Word, WordData} from './types';
 
-export const cleanResult = (res: WordData): Word | string => {
-  console.log({res: res.phonetics[1].license});
-  const pron = res.phonetics.find(pronounce => {
-    return (
-      pronounce.text &&
-      pronounce.audio &&
-      (pronounce.license.name.includes('BY-SA') ||
-        (pronounce.license.name.includes('BY') &&
-          pronounce.license.name.includes('US'))) &&
-      pronounce.license.name.includes('3.0')
-    );
-  });
-
-  console.log({pron});
-
-  if (pron) {
-    const result = {
-      word: res.word,
-      pronounciation: {
-        text: pron.text,
-        audio: pron.audio,
-      },
-    };
-    return result;
-  } else return 'The word has not been found';
+export const cleanResult = (res: GetWordResult): Word | string | undefined => {
+  const results: Array<Word> = [];
+  let result;
+  if (res.results) {
+    for (const _res of res.results) {
+      if (_res.lexicalEntries)
+        for (const lex of _res.lexicalEntries) {
+          if (lex && lex.entries) {
+            const prons = lex.entries.find(ent => ent.pronunciations);
+            if (prons && prons.pronunciations)
+              for (const pron of prons.pronunciations) {
+                if (pron.dialects?.includes('American English')) {
+                  if (pron.audioFile && pron.phoneticSpelling) {
+                    results.push({
+                      pronounciation: {
+                        audio: pron.audioFile,
+                        text: pron.phoneticSpelling,
+                      },
+                      word: _res.word,
+                    });
+                  }
+                }
+              }
+          }
+        }
+    }
+    if (results.length > 0 && results[0]) return results[0];
+    else return 'The Word has not been found';
+  }
 };
 
 export const API_CALL = {
   getWordData: async (word: string): Promise<Word | string> => {
     let result;
+
+    axios.defaults.headers.common['app_id'] = 'APP_ID';
+    axios.defaults.headers.common['app_key'] = 'APP_KEY';
+
     try {
       const res = await axios.get(
-        `https://api.dictionaryapi.dev/api/v2/entries/en/${word}`,
+        `https://od-api.oxforddictionaries.com/api/v2/entries/en-us/${word}`,
       );
-      console.log(...res.data);
-      const results = [];
-      for (const resData of res.data) {
-        results.push(cleanResult(resData));
-      }
+      const results: Array<Word> = [];
+      const _res = cleanResult(res.data);
+      if (_res && typeof _res !== 'string') results.push(_res);
       results.length > 0
         ? (result = results[0])
         : (result = 'The word is not found');
